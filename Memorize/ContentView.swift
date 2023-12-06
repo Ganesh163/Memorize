@@ -9,22 +9,26 @@ import SwiftUI
 
 struct ContentView: View {
     
-    let emojis = ["🕷️","😈","👻","🌙","🍴","👹","☠️","🦂"]
-    @State var cardCount: Int = 4
+    let vehicleEmoji = ["🛵","🛺","✈️","🚆","🛳️","🚁","🚎","🚲"]
+    let animalEmoji = ["🐯","🐭","🐶","🐵","🐤","🦄","🐍","🦉"]
+    let haloweenEmoji = ["🕷️","😈","👻","🌙","🍴","👹","☠️","🦂"]
+
+    @State var emojis : [String] = []
     
     var body: some View {
         VStack{
+            Text("Memorize!").font(.largeTitle)
             ScrollView{
                 cards
             }
             Spacer()
-            cardCountAdjusters
+            cardThemeAdjusters
         }
     }
     
     var cards: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 120))]){
-            ForEach(0..<cardCount, id: \.self){ index in
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 60))]){
+            ForEach(0..<emojis.count, id: \.self){ index in
                 CardView(context: emojis[index])
                     .aspectRatio(2/3,contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
             }
@@ -33,23 +37,32 @@ struct ContentView: View {
         .foregroundColor(.orange)
     }
     
-    var cardCountAdjusters : some View {
+    var cardThemeAdjusters : some View {
         HStack{
-            cardCountAdjuster(by: -1, symbol: "rectangle.stack.badge.minus.fill")
-            Spacer()
-            cardCountAdjuster(by: +1, symbol: "rectangle.stack.badge.plus.fill")
+            cardThemeAdjuster(themeName:"Vehicles", symbol: "car.circle")
+            cardThemeAdjuster(themeName:"Animals", symbol: "fish.circle")
+            cardThemeAdjuster(themeName:"Haloween", symbol: "theatermasks.circle")
         }
         .imageScale(.large)
         .font(.largeTitle)
     }
     
-    func cardCountAdjuster(by offset: Int, symbol: String) -> some View {
-        Button(action: {
-                cardCount += offset
-        }, label: {
-            Image(systemName: symbol)
-        })
-        .disabled(cardCount + offset < 1 || cardCount + offset > emojis.count)
+    func cardThemeAdjuster(themeName: String, symbol: String) -> some View {
+        VStack{
+            Button(action: {
+                if themeName == "Vehicles" {
+                    emojis = (vehicleEmoji + vehicleEmoji).shuffled()
+                }else if themeName == "Animals" {
+                    emojis = (animalEmoji + animalEmoji).shuffled()
+                }else{
+                    emojis = (haloweenEmoji + haloweenEmoji).shuffled()
+                }
+            }, label: {
+                Image(systemName: symbol)
+            })
+            Text(themeName).font(.title3)
+        }
+        .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
         .padding()
     }
 }
