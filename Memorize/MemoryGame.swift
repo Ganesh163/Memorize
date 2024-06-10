@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MemoryGame<CardContent> where CardContent: Equatable {
     private(set) var cards : Array<Card>
+    private(set) var score : Int = 0
     
     init(numberOfPairsOfCards: Int, cardContentFactory: (Int) -> CardContent){
         cards = []
@@ -29,11 +30,29 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
                     if cards[chosenIndex].content == cards[potentialMatchIndex].content {
                         cards[chosenIndex].isMatched = true
                         cards[potentialMatchIndex].isMatched = true
+                        score(card: cards[chosenIndex], matchWith: cards[potentialMatchIndex])
+                    } else {
+                        score(card: cards[chosenIndex], matchWith: cards[potentialMatchIndex])
+                        cards[chosenIndex].hasBeenSeen = true
+                        cards[potentialMatchIndex].hasBeenSeen = true
                     }
+                    cards[chosenIndex].isFaceUp = true
                 } else {
                     indexOfTheOnlyFaceUpCard = chosenIndex
                 }
-                cards[chosenIndex].isFaceUp = true
+            }
+        }
+    }
+    
+    mutating func score(card: Card, matchWith potentialMatch: Card) {
+        if card.content == potentialMatch.content {
+            score += 4 // Award 4 points for a match
+        } else {
+            if card.hasBeenSeen {
+                score -= 1 // Penalize for previously seen card
+            }
+            if potentialMatch.hasBeenSeen {
+                score -= 1 // Penalize for previously seen card
             }
         }
     }
@@ -50,6 +69,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
     struct Card : Equatable, Identifiable {
         var isFaceUp = false
         var isMatched = false
+        var hasBeenSeen = false
         let content : CardContent
         
         var id: String

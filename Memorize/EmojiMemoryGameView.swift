@@ -9,27 +9,25 @@ import SwiftUI
 
 struct EmojiMemoryGameView: View {
     
-    let vehicleEmoji = ["🛵","🛺","✈️","🚆","🛳️","🚁","🚎","🚲"]
-    let animalEmoji = ["🐯","🐭","🐶","🐵","🐤","🦄","🐍","🦉"]
-    let haloweenEmoji = ["🕷️","😈","👻","🌙","🍴","👹","☠️","🦂"]
-    
     @ObservedObject var viewModel: EmojiMemoryGame
 
     @State var emojis : [String] = []
     
     var body: some View {
         VStack{
-            Text("Memorize!").font(.largeTitle)
+            HStack{
+                Text(viewModel.selectedTheme.name)
+                Spacer()
+                Text("Score : \(viewModel.score)")
+            }
+            .font(.title)
             ScrollView{
                 cards
-                    .animation(.default, value: viewModel.cards  )
+                    .animation(.default, value: viewModel.cards)
             }
-            Button("Shuffle"){
-                viewModel.shuffle()
-            }
-            Spacer()
-            cardThemeAdjusters
+            buttons
         }
+        .padding(.horizontal)
     }
     
     var cards: some View {
@@ -42,38 +40,37 @@ struct EmojiMemoryGameView: View {
                         viewModel.choose(card)
                     }
             }
-        } 
-        .padding()
-        .foregroundColor(.orange)
+        }
+        .foregroundColor(Color.fromString(viewModel.selectedTheme.colour))
     }
     
-    var cardThemeAdjusters : some View {
+    var buttons: some View {
         HStack{
-            cardThemeAdjuster(themeName:"Vehicles", symbol: "car.circle")
-            cardThemeAdjuster(themeName:"Animals", symbol: "fish.circle")
-            cardThemeAdjuster(themeName:"Haloween", symbol: "theatermasks.circle")
-        }
-        .imageScale(.large)
-        .font(.largeTitle)
-    }
-    
-    func cardThemeAdjuster(themeName: String, symbol: String) -> some View {
-        VStack{
             Button(action: {
-                if themeName == "Vehicles" {
-                    emojis = (vehicleEmoji + vehicleEmoji).shuffled()
-                }else if themeName == "Animals" {
-                    emojis = (animalEmoji + animalEmoji).shuffled()
-                }else{
-                    emojis = (haloweenEmoji + haloweenEmoji).shuffled()
-                }
+                viewModel.shuffle()
             }, label: {
-                Image(systemName: symbol)
+                Image(systemName:"shuffle")
+                    .font(.title3) // Custom font size
+                    .foregroundColor(.white) // Text color
+                    .padding() // Inner padding
+                    .frame(maxWidth: .infinity)
+                    .background(.blue)
+                    .cornerRadius(15) // Rounded corners
+                    .shadow(color: .gray, radius: 5, x: 0, y: 5) // Shadow
             })
-            Text(themeName).font(.title3)
+            Button(action: {
+                viewModel.createGame()
+            }, label: {
+                Image(systemName:"plus")
+                    .font(.title2) // Custom font size
+                    .foregroundColor(.white) // Text color
+                    .padding() // Inner padding
+                    .frame(maxWidth: .infinity)
+                    .background(.blue)
+                    .cornerRadius(15) // Rounded corners
+                    .shadow(color: .gray, radius: 5, x: 0, y: 5) // Shadow
+            })
         }
-        .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
-        .padding()
     }
 }
 
@@ -106,4 +103,34 @@ struct CardView: View {
 
 #Preview {
     EmojiMemoryGameView(viewModel: EmojiMemoryGame())
+}
+
+
+extension Color {
+    static func fromString(_ colorString: String) -> Color {
+        switch colorString.lowercased() {
+        case "red":
+            return .red
+        case "green":
+            return .green
+        case "blue":
+            return .blue
+        case "orange":
+            return .orange
+        case "yellow":
+            return .yellow
+        case "purple":
+            return .purple
+        case "pink":
+            return .pink
+        case "gray":
+            return .gray
+        case "black":
+            return .black
+        case "white":
+            return .white
+        default:
+            return .clear // Default color if no match is found
+        }
+    }
 }
