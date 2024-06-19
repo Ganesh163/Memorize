@@ -25,11 +25,11 @@ class EmojiMemoryGame: ObservableObject {
     ]
     
     private static func createMemoryGame(theme: Theme) -> MemoryGame<String> {
-        MemoryGame(numberOfPairsOfCards: 10) { pairIndex in
+        MemoryGame(numberOfPairsOfCards:10) { pairIndex in
             if theme.emojis.indices.contains(pairIndex){
                 return theme.emojis[pairIndex]
             }else{
-                return "⁉️"
+                return theme.emojis.randomElement() ?? theme.emojis[0]
             }
         }
     }

@@ -46,7 +46,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
     
     mutating func score(card: Card, matchWith potentialMatch: Card) {
         if card.content == potentialMatch.content {
-            score += 4 // Award 4 points for a match
+            score += 2 // Award 4 points for a match
         } else {
             if card.hasBeenSeen {
                 score -= 1 // Penalize for previously seen card
